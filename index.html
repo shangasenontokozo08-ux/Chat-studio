@@ -11,87 +11,95 @@
 body{margin:0;background:#0b141a;color:#e9edef;font-family:Arial,sans-serif}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-header{background:#202c33;padding:16px;display:flex;align-items:center;justify-content:space-between}
-header h2{margin:0;color:#25d366;font-size:22px}
-header button{background:none;border:0;color:#25d366;font-size:20px}
-.screen{display:none;max-width:650px;margin:auto;min-height:90vh}
+header{height:65px;background:#202c33;padding:0 16px;display:flex;align-items:center;justify-content:space-between}
+header h2{color:#25d366;margin:0;font-size:22px}
+.icon-btn{background:none;border:0;color:#e9edef;font-size:24px}
+.screen{display:none;max-width:650px;margin:auto;min-height:calc(100vh - 65px)}
 .screen.active{display:block}
-.search{width:100%;padding:13px;margin:12px 0;background:#202c33;border:0;border-radius:9px;color:white}
-.contact{display:flex;align-items:center;gap:13px;padding:14px;border-bottom:1px solid #26343b;cursor:pointer}
-.avatar{width:49px;height:49px;border-radius:50%;background:#34534a;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.search{width:100%;padding:13px;background:#202c33;border:0;border-radius:9px;color:white;outline:none}
+.search-wrap{padding:12px}
+.contact{display:flex;align-items:center;gap:13px;padding:13px 15px;border-bottom:1px solid #26343b;cursor:pointer}
+.contact:active{background:#202c33}
+.avatar{width:49px;height:49px;flex-shrink:0;border-radius:50%;background:#34534a;display:grid;place-items:center;font-size:23px;overflow:hidden}
 .contact-info{flex:1;min-width:0}
-.contact-info strong{display:block;margin-bottom:6px}
-.muted{color:#aebac1;font-size:13px}
-.chat-header{display:flex;align-items:center;gap:12px}
-.chat-header button{background:none;color:white;border:0;font-size:27px}
-.chat-header .avatar{width:42px;height:42px}
-.chat-body{padding:16px;min-height:calc(100vh - 90px);background:#0b141a;background-size:cover;background-position:center}
-.message{max-width:82%;width:max-content;padding:10px 12px;border-radius:9px;margin:9px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.contact-info strong{display:block;font-size:16px;margin-bottom:6px}
+.preview{color:#aebac1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-top{height:65px;background:#202c33;display:flex;align-items:center;gap:12px;padding:0 12px}
+.chat-top button{background:none;border:0;color:white;font-size:28px}
+.chat-top .avatar{width:42px;height:42px}
+.chat-top strong{font-size:16px}
+.chat-body{padding:15px;min-height:calc(100vh - 130px);background:#0b141a;background-size:cover;background-position:center}
+.message{max-width:82%;width:max-content;padding:10px 12px;border-radius:9px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.35}
 .sent{background:#005c4b;margin-left:auto}
 .received{background:#202c33;margin-right:auto}
-.time{font-size:10px;color:#b8c9c4;text-align:right;margin-top:6px}
+.time{font-size:10px;color:#c0d4cc;text-align:right;margin-top:5px}
 .empty{text-align:center;color:#aebac1;padding:45px 20px}
 .panel{padding:18px}
-.panel h3{margin-top:24px}
+.panel h3{margin-top:25px;font-size:17px}
+.panel label{font-size:13px;color:#aebac1}
 .panel input,.panel textarea,.panel select{width:100%;padding:12px;margin:7px 0 13px;background:#202c33;color:white;border:1px solid #39464d;border-radius:7px}
-.panel textarea{min-height:85px}
+.panel textarea{min-height:85px;resize:vertical}
 .action{background:#25d366;color:#092b20;border:0;border-radius:7px;padding:12px 16px;font-weight:bold;margin:5px 4px 5px 0}
 .secondary{background:#26343b;color:white}
 .danger{background:#713d42;color:white}
-.item{padding:12px;border-bottom:1px solid #26343b}
-.back{background:none;border:0;color:#25d366;font-size:16px}
+.back{background:none;border:0;color:#25d366;padding:0;font-size:16px}
+.item{padding:12px 0;border-bottom:1px solid #26343b}
+.item p{color:#aebac1;font-size:14px;overflow-wrap:anywhere}
+.settings-title{display:flex;justify-content:space-between;align-items:center}
 </style>
 </head>
 <body>
 
 <header>
 <h2>Chat Space</h2>
-<button onclick="showScreen('settings')" title="Settings">⚙</button>
+<button class="icon-btn" onclick="showScreen('settings')" title="Settings">⚙</button>
 </header>
 
 <section id="home" class="screen active">
-<div style="padding:12px">
-<input class="search" id="search" placeholder="Search">
+<div class="search-wrap">
+<input class="search" id="search" placeholder="Search" oninput="renderContacts()">
 </div>
 <div id="contacts"></div>
 </section>
 
 <section id="chat" class="screen">
-<header>
-<div class="chat-header">
+<div class="chat-top">
 <button onclick="showScreen('home')">‹</button>
 <div class="avatar" id="chatAvatar">🙂</div>
 <strong id="chatName">Contact</strong>
 </div>
-</header>
 <div class="chat-body" id="chatBody"></div>
 </section>
 
 <section id="settings" class="screen">
 <div class="panel">
-<button class="back" onclick="showScreen('home')">← Back to chats</button>
+<div class="settings-title">
 <h2>Settings</h2>
+<button class="back" onclick="showScreen('home')">← Back to chats</button>
+</div>
 
 <h3>Create a contact</h3>
-<input id="newName" placeholder="Contact name">
-<input id="newEmoji" placeholder="Contact emoji (e.g. 😊)" maxlength="4">
-<button class="action" onclick="addContact()">Add contact</button>
+<label>Contact name</label>
+<input id="newName" placeholder="Enter contact name">
+<label>Profile picture emoji</label>
+<input id="newEmoji" placeholder="Example: 😊" maxlength="8">
+<button class="action" onclick="addContact()">＋ Add contact</button>
 
 <h3>Your contacts</h3>
 <div id="manageContacts"></div>
 
 <h3>Add a message</h3>
-<label>Choose conversation</label>
+<label>Choose contact</label>
 <select id="messageContact"></select>
 
-<label>Who sent the message?</label>
+<label>Message sender</label>
 <select id="messageSide">
 <option value="received">Contact</option>
 <option value="sent">You</option>
 </select>
 
 <label>Message</label>
-<textarea id="messageText" placeholder="Write your message..."></textarea>
+<textarea id="messageText" placeholder="Type your message"></textarea>
 
 <label>Date</label>
 <input id="messageDate" type="date">
@@ -101,21 +109,23 @@ header button{background:none;border:0;color:#25d366;font-size:20px}
 
 <button class="action" onclick="addMessage()">Add message</button>
 
-<h3>Change wallpaper</h3>
-<label>Choose conversation</label>
-<select id="wallpaperContact"></select>
+<h3>Conversation wallpaper</h3>
+<label>Choose contact</label>
+<select id="wallpaperContact" onchange="updateWallpaperChoice()"></select>
+<label>Choose wallpaper colour</label>
 <select id="wallpaperChoice" onchange="changeWallpaper()">
 <option value="">Default dark</option>
 <option value="#102820">Dark green</option>
 <option value="#29213a">Dark purple</option>
 <option value="#263344">Dark blue</option>
 <option value="#3a2925">Dark brown</option>
+<option value="#342b36">Dark mauve</option>
 </select>
 
 <h3>Edit or delete messages</h3>
 <div id="manageMessages"></div>
 
-<h3>Backup</h3>
+<h3>Backup your chats</h3>
 <button class="action secondary" onclick="exportData()">Export backup</button>
 <button class="action secondary" onclick="document.getElementById('importFile').click()">Import backup</button>
 <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
@@ -123,19 +133,16 @@ header button{background:none;border:0;color:#25d366;font-size:20px}
 </section>
 
 <script>
+const STORAGE_KEY="chatSpaceData";
 let data;
-try{
-data=JSON.parse(localStorage.getItem("chatSpaceData"));
-}catch(e){data=null}
-if(!data || !Array.isArray(data.contacts)){
-data={contacts:[],messages:{},wallpapers:{}};
-}
+try{data=JSON.parse(localStorage.getItem(STORAGE_KEY))}catch(e){data=null}
+if(!data||!Array.isArray(data.contacts))data={contacts:[],messages:{},wallpapers:{}};
 if(!data.messages)data.messages={};
 if(!data.wallpapers)data.wallpapers={};
 let current=null;
 
 function save(){
-localStorage.setItem("chatSpaceData",JSON.stringify(data));
+localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
 }
 
 function showScreen(id){
@@ -148,7 +155,7 @@ if(id==="settings")renderSettings();
 function addContact(){
 let name=document.getElementById("newName").value.trim();
 let emoji=document.getElementById("newEmoji").value.trim()||"🙂";
-if(!name){alert("Enter a contact name.");return}
+if(!name){alert("Please enter a contact name.");return}
 let id=Date.now().toString();
 data.contacts.push({id,name,emoji});
 data.messages[id]=[];
@@ -174,13 +181,13 @@ let div=document.createElement("div");
 div.className="contact";
 let avatar=document.createElement("div");
 avatar.className="avatar";
-avatar.textContent=c.emoji;
+avatar.textContent=c.emoji||"🙂";
 let info=document.createElement("div");
 info.className="contact-info";
 let name=document.createElement("strong");
 name.textContent=c.name;
-let preview=document.createElement("span");
-preview.className="muted";
+let preview=document.createElement("div");
+preview.className="preview";
 preview.textContent=last?last.text:"";
 info.append(name,preview);
 div.append(avatar,info);
@@ -194,7 +201,7 @@ current=id;
 let c=data.contacts.find(x=>x.id===id);
 if(!c)return;
 document.getElementById("chatName").textContent=c.name;
-document.getElementById("chatAvatar").textContent=c.emoji;
+document.getElementById("chatAvatar").textContent=c.emoji||"🙂";
 renderChat();
 showScreen("chat");
 }
@@ -210,7 +217,7 @@ return;
 }
 msgs.forEach(m=>{
 let div=document.createElement("div");
-div.className="message "+m.side;
+div.className="message "+(m.side==="sent"?"sent":"received");
 let content=document.createElement("div");
 content.textContent=m.text;
 let time=document.createElement("div");
@@ -224,23 +231,19 @@ body.appendChild(div);
 function renderSettings(){
 let contacts=document.getElementById("manageContacts");
 let select=document.getElementById("messageContact");
-let wallpaperSelect=document.getElementById("wallpaperContact");
+let wallSelect=document.getElementById("wallpaperContact");
 contacts.innerHTML="";
 select.innerHTML="";
-wallpaperSelect.innerHTML="";
+wallSelect.innerHTML="";
 data.contacts.forEach(c=>{
-let option=document.createElement("option");
-option.value=c.id;
-option.textContent=c.name;
-select.appendChild(option);
-let option2=document.createElement("option");
-option2.value=c.id;
-option2.textContent=c.name;
-wallpaperSelect.appendChild(option2);
+let op=document.createElement("option");
+op.value=c.id;op.textContent=c.name;select.appendChild(op);
+let op2=document.createElement("option");
+op2.value=c.id;op2.textContent=c.name;wallSelect.appendChild(op2);
 let div=document.createElement("div");
 div.className="item";
 let name=document.createElement("strong");
-name.textContent=c.emoji+" "+c.name;
+name.textContent=(c.emoji||"🙂")+" "+c.name;
 let del=document.createElement("button");
 del.className="action danger";
 del.textContent="Delete contact";
@@ -256,18 +259,18 @@ function addMessage(){
 let id=document.getElementById("messageContact").value;
 let text=document.getElementById("messageText").value.trim();
 if(!id){alert("Create a contact first.");return}
-if(!text){alert("Write a message first.");return}
-let date=document.getElementById("messageDate").value;
-let time=document.getElementById("messageTime").value;
+if(!text){alert("Please write a message.");return}
 if(!data.messages[id])data.messages[id]=[];
 data.messages[id].push({
 text,
 side:document.getElementById("messageSide").value,
-date,time
+date:document.getElementById("messageDate").value,
+time:document.getElementById("messageTime").value
 });
 save();
 document.getElementById("messageText").value="";
 renderManageMessages();
+alert("Message added.");
 }
 
 function renderManageMessages(){
@@ -290,6 +293,7 @@ if(updated!==null&&updated.trim()){
 m.text=updated.trim();
 save();
 renderManageMessages();
+renderContacts();
 }
 };
 let del=document.createElement("button");
@@ -300,19 +304,18 @@ if(confirm("Delete this message?")){
 data.messages[c.id].splice(i,1);
 save();
 renderManageMessages();
+renderContacts();
 }
 };
 div.append(label,preview,edit,del);
 el.appendChild(div);
 });
 });
-if(!el.children.length){
-el.innerHTML='<p class="muted">No messages yet.</p>';
-}
+if(!el.children.length)el.innerHTML='<p class="preview">No messages yet.</p>';
 }
 
 function deleteContact(id){
-if(!confirm("Delete this contact and its conversation?"))return;
+if(!confirm("Delete this contact and its messages?"))return;
 data.contacts=data.contacts.filter(c=>c.id!==id);
 delete data.messages[id];
 delete data.wallpapers[id];
@@ -327,7 +330,7 @@ document.getElementById("wallpaperChoice").value=data.wallpapers[id]||"";
 
 function changeWallpaper(){
 let id=document.getElementById("wallpaperContact").value;
-if(!id){alert("Create a contact first.");return}
+if(!id)return;
 let value=document.getElementById("wallpaperChoice").value;
 data.wallpapers[id]=value||"#0b141a";
 save();
@@ -336,11 +339,12 @@ if(current===id)renderChat();
 
 function exportData(){
 let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+let url=URL.createObjectURL(blob);
 let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
+a.href=url;
 a.download="chat-space-backup.json";
 a.click();
-URL.revokeObjectURL(a.href);
+URL.revokeObjectURL(url);
 }
 
 function importData(event){
@@ -357,15 +361,11 @@ save();
 renderSettings();
 renderContacts();
 alert("Backup imported.");
-}catch(e){
-alert("That backup file could not be read.");
-}
+}catch(e){alert("Could not read that backup file.");}
 };
 reader.readAsText(file);
 }
 
-document.getElementById("search").addEventListener("input",renderContacts);
-document.getElementById("wallpaperContact").addEventListener("change",updateWallpaperChoice);
 document.getElementById("messageDate").value=new Date().toISOString().slice(0,10);
 document.getElementById("messageTime").value=new Date().toTimeString().slice(0,5);
 renderContacts();
