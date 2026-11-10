@@ -11,46 +11,47 @@
 body{margin:0;background:#0b141a;color:#e9edef;font-family:Arial,sans-serif}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-header{background:#202c33;padding:17px;display:flex;justify-content:space-between;align-items:center}
-header h2{margin:0;color:#25d366}
-header button,.topbutton{background:transparent;color:#25d366;border:0;font-size:15px}
+header{background:#202c33;padding:16px;display:flex;align-items:center;justify-content:space-between}
+header h2{margin:0;color:#25d366;font-size:22px}
+header button{background:none;border:0;color:#25d366;font-size:20px}
 .screen{display:none;max-width:650px;margin:auto;min-height:90vh}
 .screen.active{display:block}
 .search{width:100%;padding:13px;margin:12px 0;background:#202c33;border:0;border-radius:9px;color:white}
 .contact{display:flex;align-items:center;gap:13px;padding:14px;border-bottom:1px solid #26343b;cursor:pointer}
-.avatar{width:48px;height:48px;border-radius:50%;background:#34534a;display:grid;place-items:center;font-size:21px}
+.avatar{width:49px;height:49px;border-radius:50%;background:#34534a;display:grid;place-items:center;font-size:22px;flex-shrink:0}
 .contact-info{flex:1;min-width:0}
 .contact-info strong{display:block;margin-bottom:6px}
 .muted{color:#aebac1;font-size:13px}
 .chat-header{display:flex;align-items:center;gap:12px}
-.chat-header button{background:none;color:white;border:0;font-size:22px}
-.chat-body{padding:16px;min-height:65vh;background:#0b141a;background-size:cover;background-position:center}
+.chat-header button{background:none;color:white;border:0;font-size:27px}
+.chat-header .avatar{width:42px;height:42px}
+.chat-body{padding:16px;min-height:calc(100vh - 90px);background:#0b141a;background-size:cover;background-position:center}
 .message{max-width:82%;width:max-content;padding:10px 12px;border-radius:9px;margin:9px 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .sent{background:#005c4b;margin-left:auto}
 .received{background:#202c33;margin-right:auto}
 .time{font-size:10px;color:#b8c9c4;text-align:right;margin-top:6px}
 .empty{text-align:center;color:#aebac1;padding:45px 20px}
 .panel{padding:18px}
-.panel h3{margin-top:22px}
+.panel h3{margin-top:24px}
 .panel input,.panel textarea,.panel select{width:100%;padding:12px;margin:7px 0 13px;background:#202c33;color:white;border:1px solid #39464d;border-radius:7px}
 .panel textarea{min-height:85px}
 .action{background:#25d366;color:#092b20;border:0;border-radius:7px;padding:12px 16px;font-weight:bold;margin:5px 4px 5px 0}
 .secondary{background:#26343b;color:white}
 .danger{background:#713d42;color:white}
 .item{padding:12px;border-bottom:1px solid #26343b}
-.item button{margin-top:8px}
+.back{background:none;border:0;color:#25d366;font-size:16px}
 </style>
 </head>
 <body>
+
 <header>
 <h2>Chat Space</h2>
-<button onclick="showScreen('settings')">⚙ Settings</button>
+<button onclick="showScreen('settings')" title="Settings">⚙</button>
 </header>
 
 <section id="home" class="screen active">
 <div style="padding:12px">
-<input class="search" id="search" placeholder="Search contacts..." oninput="renderContacts()">
-<button class="action" onclick="showScreen('settings')">＋ Manage contacts and chats</button>
+<input class="search" id="search" placeholder="Search">
 </div>
 <div id="contacts"></div>
 </section>
@@ -60,19 +61,17 @@ header button,.topbutton{background:transparent;color:#25d366;border:0;font-size
 <div class="chat-header">
 <button onclick="showScreen('home')">‹</button>
 <div class="avatar" id="chatAvatar">🙂</div>
-<div><strong id="chatName">Contact</strong><div class="muted">Personal chat</div></div>
+<strong id="chatName">Contact</strong>
 </div>
 </header>
 <div class="chat-body" id="chatBody"></div>
-<div style="padding:12px">
-<button class="action secondary" onclick="showScreen('settings')">Edit this conversation in Settings</button>
-</div>
 </section>
 
 <section id="settings" class="screen">
 <div class="panel">
-<button class="topbutton" onclick="showScreen('home')">← Back to contacts</button>
+<button class="back" onclick="showScreen('home')">← Back to chats</button>
 <h2>Settings</h2>
+
 <h3>Create a contact</h3>
 <input id="newName" placeholder="Contact name">
 <input id="newEmoji" placeholder="Contact emoji (e.g. 😊)" maxlength="4">
@@ -84,20 +83,27 @@ header button,.topbutton{background:transparent;color:#25d366;border:0;font-size
 <h3>Add a message</h3>
 <label>Choose conversation</label>
 <select id="messageContact"></select>
+
 <label>Who sent the message?</label>
 <select id="messageSide">
 <option value="received">Contact</option>
 <option value="sent">You</option>
 </select>
+
 <label>Message</label>
 <textarea id="messageText" placeholder="Write your message..."></textarea>
+
 <label>Date</label>
 <input id="messageDate" type="date">
+
 <label>Time</label>
 <input id="messageTime" type="time">
+
 <button class="action" onclick="addMessage()">Add message</button>
 
-<h3>Change conversation wallpaper</h3>
+<h3>Change wallpaper</h3>
+<label>Choose conversation</label>
+<select id="wallpaperContact"></select>
 <select id="wallpaperChoice" onchange="changeWallpaper()">
 <option value="">Default dark</option>
 <option value="#102820">Dark green</option>
@@ -108,7 +114,8 @@ header button,.topbutton{background:transparent;color:#25d366;border:0;font-size
 
 <h3>Edit or delete messages</h3>
 <div id="manageMessages"></div>
-<p class="muted">Your fictional conversations are saved in this browser on this device.</p>
+
+<h3>Backup</h3>
 <button class="action secondary" onclick="exportData()">Export backup</button>
 <button class="action secondary" onclick="document.getElementById('importFile').click()">Import backup</button>
 <input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
@@ -116,178 +123,249 @@ header button,.topbutton{background:transparent;color:#25d366;border:0;font-size
 </section>
 
 <script>
-let data = JSON.parse(localStorage.getItem("chatSpaceData") || '{"contacts":[],"messages":{},"wallpapers":{}}');
-let current = null;
+let data;
+try{
+data=JSON.parse(localStorage.getItem("chatSpaceData"));
+}catch(e){data=null}
+if(!data || !Array.isArray(data.contacts)){
+data={contacts:[],messages:{},wallpapers:{}};
+}
+if(!data.messages)data.messages={};
+if(!data.wallpapers)data.wallpapers={};
+let current=null;
 
 function save(){
- localStorage.setItem("chatSpaceData",JSON.stringify(data));
+localStorage.setItem("chatSpaceData",JSON.stringify(data));
 }
+
 function showScreen(id){
- document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- if(id==="home")renderContacts();
- if(id==="settings")renderSettings();
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+if(id==="home")renderContacts();
+if(id==="settings")renderSettings();
 }
+
 function addContact(){
- let name=document.getElementById("newName").value.trim();
- let emoji=document.getElementById("newEmoji").value.trim()||"🙂";
- if(!name){alert("Enter a contact name.");return}
- let id=Date.now().toString();
- data.contacts.push({id,name,emoji});
- data.messages[id]=[];
- save();
- document.getElementById("newName").value="";
- document.getElementById("newEmoji").value="";
- renderSettings();
+let name=document.getElementById("newName").value.trim();
+let emoji=document.getElementById("newEmoji").value.trim()||"🙂";
+if(!name){alert("Enter a contact name.");return}
+let id=Date.now().toString();
+data.contacts.push({id,name,emoji});
+data.messages[id]=[];
+save();
+document.getElementById("newName").value="";
+document.getElementById("newEmoji").value="";
+renderSettings();
 }
+
 function renderContacts(){
- let q=document.getElementById("search").value.toLowerCase();
- let el=document.getElementById("contacts");
- el.innerHTML="";
- let list=data.contacts.filter(c=>c.name.toLowerCase().includes(q));
- if(!list.length){el.innerHTML='<div class="empty">No contacts yet. Add one in Settings.</div>';return}
- list.forEach(c=>{
- let msgs=data.messages[c.id]||[];
- let last=msgs[msgs.length-1];
- let div=document.createElement("div");
- div.className="contact";
- div.innerHTML='<div class="avatar"></div><div class="contact-info"><strong></strong><span class="muted"></span></div>';
- div.querySelector(".avatar").textContent=c.emoji;
- div.querySelector("strong").textContent=c.name;
- div.querySelector(".muted").textContent=last?last.text:"Tap to open conversation";
- div.onclick=()=>openChat(c.id);
- el.appendChild(div);
- });
+let q=document.getElementById("search").value.toLowerCase();
+let el=document.getElementById("contacts");
+el.innerHTML="";
+let list=data.contacts.filter(c=>c.name.toLowerCase().includes(q));
+if(!list.length){
+el.innerHTML='<div class="empty">No chats yet</div>';
+return;
 }
-function openChat(id){
- current=id;
- let c=data.contacts.find(x=>x.id===id);
- document.getElementById("chatName").textContent=c.name;
- document.getElementById("chatAvatar").textContent=c.emoji;
- renderChat();
- showScreen("chat");
-}
-function renderChat(){
- let body=document.getElementById("chatBody");
- body.innerHTML="";
- body.style.backgroundColor=data.wallpapers[current]||"#0b141a";
- let msgs=data.messages[current]||[];
- if(!msgs.length){body.innerHTML='<div class="empty">No messages yet.</div>';return}
- msgs.forEach(m=>{
- let div=document.createElement("div");
- div.className="message "+m.side;
- let content=document.createElement("div");
- content.textContent=m.text;
- let time=document.createElement("div");
- time.className="time";
- time.textContent=(m.date||"")+" "+(m.time||"");
- div.append(content,time);
- body.appendChild(div);
- });
- body.scrollTop=body.scrollHeight;
-}
-function renderSettings(){
- let contacts=document.getElementById("manageContacts");
- let select=document.getElementById("messageContact");
- contacts.innerHTML="";
- select.innerHTML="";
- data.contacts.forEach(c=>{
- let option=document.createElement("option");
- option.value=c.id;option.textContent=c.name;select.appendChild(option);
- let div=document.createElement("div");
- div.className="item";
- let name=document.createElement("strong");
- name.textContent=c.emoji+" "+c.name;
- let del=document.createElement("button");
- del.className="action danger";
- del.textContent="Delete contact";
- del.onclick=()=>deleteContact(c.id);
- div.append(name,document.createElement("br"),del);
- contacts.appendChild(div);
- });
- renderManageMessages();
-}
-function addMessage(){
- let id=document.getElementById("messageContact").value;
- let text=document.getElementById("messageText").value.trim();
- if(!id){alert("Create a contact first.");return}
- if(!text){alert("Write a message first.");return}
- let date=document.getElementById("messageDate").value;
- let time=document.getElementById("messageTime").value;
- if(!data.messages[id])data.messages[id]=[];
- data.messages[id].push({
- text,side:document.getElementById("messageSide").value,
- date,time
- });
- save();
- document.getElementById("messageText").value="";
- renderManageMessages();
-}
-function renderManageMessages(){
- let el=document.getElementById("manageMessages");
- el.innerHTML="";
- data.contacts.forEach(c=>{
- (data.messages[c.id]||[]).forEach((m,i)=>{
- let div=document.createElement("div");
- div.className="item";
- let label=document.createElement("div");
- label.textContent=c.name+" · "+(m.side==="sent"?"You":"Contact")+" · "+(m.date||"")+" "+(m.time||"");
- let preview=document.createElement("p");
- preview.textContent=m.text;
- let edit=document.createElement("button");
- edit.className="action secondary";edit.textContent="Edit";
- edit.onclick=()=>{
- let updated=prompt("Edit this message:",m.text);
- if(updated!==null&&updated.trim()){m.text=updated.trim();save();renderManageMessages();}
- };
- let del=document.createElement("button");
- del.className="action danger";del.textContent="Delete";
- del.onclick=()=>{
- if(confirm("Delete this message?")){data.messages[c.id].splice(i,1);save();renderManageMessages();}
- };
- div.append(label,preview,edit,del);
- el.appendChild(div);
- });
- });
- if(!el.children.length)el.innerHTML='<p class="muted">No messages to edit yet.</p>';
-}
-function deleteContact(id){
- if(!confirm("Delete this contact and its conversation?"))return;
- data.contacts=data.contacts.filter(c=>c.id!==id);
- delete data.messages[id];delete data.wallpapers[id];
- save();renderSettings();
-}
-function changeWallpaper(){
- let value=document.getElementById("wallpaperChoice").value;
- let id=document.getElementById("messageContact").value;
- if(!id){alert("Choose a contact first.");return}
- data.wallpapers[id]=value||"#0b141a";
- save();
- if(current===id)renderChat();
-}
-function exportData(){
- let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
- let a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="chat-space-backup.json";a.click();
- URL.revokeObjectURL(a.href);
-}
-function importData(event){
- let file=event.target.files[0];if(!file)return;
- let reader=new FileReader();
- reader.onload=()=>{
- try{
- let incoming=JSON.parse(reader.result);
- if(!Array.isArray(incoming.contacts)||!incoming.messages)throw Error();
- data=incoming;save();renderSettings();renderContacts();
- alert("Backup imported.");
- }catch(e){alert("That backup file could not be read.");}
- };
- reader.readAsText(file);
-}
-document.getElementById("messageContact").addEventListener("change",()=>{
- let id=document.getElementById("messageContact").value;
- document.getElementById("wallpaperChoice").value=data.wallpapers[id]||"";
+list.forEach(c=>{
+let msgs=data.messages[c.id]||[];
+let last=msgs[msgs.length-1];
+let div=document.createElement("div");
+div.className="contact";
+let avatar=document.createElement("div");
+avatar.className="avatar";
+avatar.textContent=c.emoji;
+let info=document.createElement("div");
+info.className="contact-info";
+let name=document.createElement("strong");
+name.textContent=c.name;
+let preview=document.createElement("span");
+preview.className="muted";
+preview.textContent=last?last.text:"";
+info.append(name,preview);
+div.append(avatar,info);
+div.onclick=()=>openChat(c.id);
+el.appendChild(div);
 });
+}
+
+function openChat(id){
+current=id;
+let c=data.contacts.find(x=>x.id===id);
+if(!c)return;
+document.getElementById("chatName").textContent=c.name;
+document.getElementById("chatAvatar").textContent=c.emoji;
+renderChat();
+showScreen("chat");
+}
+
+function renderChat(){
+let body=document.getElementById("chatBody");
+body.innerHTML="";
+body.style.backgroundColor=data.wallpapers[current]||"#0b141a";
+let msgs=data.messages[current]||[];
+if(!msgs.length){
+body.innerHTML='<div class="empty">No messages yet</div>';
+return;
+}
+msgs.forEach(m=>{
+let div=document.createElement("div");
+div.className="message "+m.side;
+let content=document.createElement("div");
+content.textContent=m.text;
+let time=document.createElement("div");
+time.className="time";
+time.textContent=(m.date||"")+" "+(m.time||"");
+div.append(content,time);
+body.appendChild(div);
+});
+}
+
+function renderSettings(){
+let contacts=document.getElementById("manageContacts");
+let select=document.getElementById("messageContact");
+let wallpaperSelect=document.getElementById("wallpaperContact");
+contacts.innerHTML="";
+select.innerHTML="";
+wallpaperSelect.innerHTML="";
+data.contacts.forEach(c=>{
+let option=document.createElement("option");
+option.value=c.id;
+option.textContent=c.name;
+select.appendChild(option);
+let option2=document.createElement("option");
+option2.value=c.id;
+option2.textContent=c.name;
+wallpaperSelect.appendChild(option2);
+let div=document.createElement("div");
+div.className="item";
+let name=document.createElement("strong");
+name.textContent=c.emoji+" "+c.name;
+let del=document.createElement("button");
+del.className="action danger";
+del.textContent="Delete contact";
+del.onclick=()=>deleteContact(c.id);
+div.append(name,document.createElement("br"),del);
+contacts.appendChild(div);
+});
+renderManageMessages();
+updateWallpaperChoice();
+}
+
+function addMessage(){
+let id=document.getElementById("messageContact").value;
+let text=document.getElementById("messageText").value.trim();
+if(!id){alert("Create a contact first.");return}
+if(!text){alert("Write a message first.");return}
+let date=document.getElementById("messageDate").value;
+let time=document.getElementById("messageTime").value;
+if(!data.messages[id])data.messages[id]=[];
+data.messages[id].push({
+text,
+side:document.getElementById("messageSide").value,
+date,time
+});
+save();
+document.getElementById("messageText").value="";
+renderManageMessages();
+}
+
+function renderManageMessages(){
+let el=document.getElementById("manageMessages");
+el.innerHTML="";
+data.contacts.forEach(c=>{
+(data.messages[c.id]||[]).forEach((m,i)=>{
+let div=document.createElement("div");
+div.className="item";
+let label=document.createElement("div");
+label.textContent=c.name+" · "+(m.side==="sent"?"You":"Contact")+" · "+(m.date||"")+" "+(m.time||"");
+let preview=document.createElement("p");
+preview.textContent=m.text;
+let edit=document.createElement("button");
+edit.className="action secondary";
+edit.textContent="Edit";
+edit.onclick=()=>{
+let updated=prompt("Edit message:",m.text);
+if(updated!==null&&updated.trim()){
+m.text=updated.trim();
+save();
+renderManageMessages();
+}
+};
+let del=document.createElement("button");
+del.className="action danger";
+del.textContent="Delete";
+del.onclick=()=>{
+if(confirm("Delete this message?")){
+data.messages[c.id].splice(i,1);
+save();
+renderManageMessages();
+}
+};
+div.append(label,preview,edit,del);
+el.appendChild(div);
+});
+});
+if(!el.children.length){
+el.innerHTML='<p class="muted">No messages yet.</p>';
+}
+}
+
+function deleteContact(id){
+if(!confirm("Delete this contact and its conversation?"))return;
+data.contacts=data.contacts.filter(c=>c.id!==id);
+delete data.messages[id];
+delete data.wallpapers[id];
+save();
+renderSettings();
+}
+
+function updateWallpaperChoice(){
+let id=document.getElementById("wallpaperContact").value;
+document.getElementById("wallpaperChoice").value=data.wallpapers[id]||"";
+}
+
+function changeWallpaper(){
+let id=document.getElementById("wallpaperContact").value;
+if(!id){alert("Create a contact first.");return}
+let value=document.getElementById("wallpaperChoice").value;
+data.wallpapers[id]=value||"#0b141a";
+save();
+if(current===id)renderChat();
+}
+
+function exportData(){
+let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="chat-space-backup.json";
+a.click();
+URL.revokeObjectURL(a.href);
+}
+
+function importData(event){
+let file=event.target.files[0];
+if(!file)return;
+let reader=new FileReader();
+reader.onload=()=>{
+try{
+let incoming=JSON.parse(reader.result);
+if(!Array.isArray(incoming.contacts)||!incoming.messages)throw Error();
+data=incoming;
+if(!data.wallpapers)data.wallpapers={};
+save();
+renderSettings();
+renderContacts();
+alert("Backup imported.");
+}catch(e){
+alert("That backup file could not be read.");
+}
+};
+reader.readAsText(file);
+}
+
+document.getElementById("search").addEventListener("input",renderContacts);
+document.getElementById("wallpaperContact").addEventListener("change",updateWallpaperChoice);
 document.getElementById("messageDate").value=new Date().toISOString().slice(0,10);
 document.getElementById("messageTime").value=new Date().toTimeString().slice(0,5);
 renderContacts();
