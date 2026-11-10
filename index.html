@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chat Studio">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Chat Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#080808;--panel:#171717;--line:#303030;--muted:#aaa;--green:#087e51;--out:#652773;--in:#242729;--wall:#252525}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{border:1px solid #414141;border-radius:10px;padding:10px 13px;background:#292929;color:#fff;cursor:pointer;min-height:42px}button.primary{background:var(--green);border-color:var(--green)}button.danger{border-color:#743b3b;color:#ffbaba}.wrap{max-width:720px;margin:auto;padding:12px;padding-bottom:40px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0}.top{display:flex;align-items:center;justify-content:space-between;gap:10px}.tabs,.row{display:flex;gap:8px;flex-wrap:wrap}.tabs button,.row>*{flex:1;min-width:0}.active{background:#123e30;border-color:#168b60}label{display:block;color:var(--muted);font-size:12px;margin:10px 0 4px}input:not([type=file]):not([type=color]),select{width:100%;background:#252525;color:white;border:1px solid #414141;border-radius:9px;padding:11px;font-size:16px;min-width:0}input[type=file]{width:100%;color:#ddd;font-size:13px}input[type=color]{width:48px;height:40px;background:#222;border:0}.screen{background:#080808;border:1px solid #333;border-radius:14px;overflow:hidden}.bar{padding:12px;background:#20231e;display:flex;align-items:center;gap:10px}.avatar{width:44px;height:44px;flex:none;border-radius:50%;background:#65436e;display:grid;place-items:center;overflow:hidden;font-weight:700}.avatar img{width:100%;height:100%;object-fit:cover}.muted,.small{font-size:12px;color:#aaa}.contactrow{display:flex;align-items:center;gap:12px;padding:12px;width:100%;border:0;border-bottom:1px solid #282828;border-radius:0;text-align:left;background:transparent}.contactrow .info{flex:1;min-width:0}.contactrow .preview{font-size:12px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{text-align:center;color:#ffd78a;background:#30291d;font-size:10px;padding:6px;letter-spacing:1px}.wall{padding:10px;min-height:250px;background:var(--wall);background-position:center;background-size:cover}.bubble{max-width:88%;margin:9px 0;padding:10px 12px;border-radius:13px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}.bubble.in{background:var(--in);margin-right:auto;border-top-left-radius:3px}.bubble.out{background:var(--out);margin-left:auto;border-top-right-radius:3px}.meta{text-align:right;color:#d0c4d2;font-size:10px;margin-top:5px}.day{background:#292929;border-radius:20px;width:max-content;max-width:100%;margin:8px auto;padding:5px 12px;font-size:11px}.hidden{display:none!important}.contact-manage{display:flex;gap:7px;align-items:center;padding:9px 0;border-bottom:1px solid #292929}.contact-manage .details{flex:1;min-width:0}.contact-manage button{padding:7px;font-size:12px}.msg-manage{display:flex;align-items:center;gap:7px;background:#252525;padding:8px;border-radius:8px;margin:6px 0;font-size:12px}.msg-manage span{flex:1;min-width:0;overflow-wrap:anywhere}.notice{font-size:12px;color:#aaa;margin-top:8px}.empty{text-align:center;color:#aaa;padding:25px 8px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <section class="panel">
+  <div class="top"><strong style="font-size:20px">Chat Studio</strong><span class="small">FICTIONAL CHAT SIMULATOR</span></div>
+  <div class="tabs" style="margin-top:12px"><button id="homeTab" class="active">Chats</button><button id="contactsTab">Contacts</button><button id="settingsTab">Appearance</button></div>
+ </section>
+ <section id="homePage" class="screen">
+  <div style="padding:14px"><div class="top"><strong style="font-size:30px">Chats</strong><button id="newHome" class="primary">＋ New chat</button></div><label for="search">Search contacts</label><input id="search" placeholder="Name or fictional number"></div>
+  <div id="chatRows"></div><div class="badge">FICTIONAL CHAT SIMULATOR · SAMPLE</div>
+ </section>
+ <section id="contactsPage" class="panel hidden"><div class="top"><strong>My contacts</strong><button id="newContact" class="primary">＋ Add contact</button></div><div id="contactRows"></div></section>
+ <section id="chatPage" class="screen hidden">
+  <div class="bar"><button id="back">‹</button><div class="avatar" id="chatAvatar">?</div><div style="flex:1;min-width:0"><strong id="chatName">Contact</strong><div class="muted" id="chatNumber"></div></div><span>☎　⋮</span></div>
+  <div class="badge">FICTIONAL CHAT · SAMPLE</div><div class="wall" id="wall"><div id="bubbles"></div></div>
+  <div style="padding:10px;background:#292929;display:flex;gap:8px;align-items:center"><span>＋</span><div style="background:#414141;color:#bbb;border-radius:22px;padding:11px;flex:1;font-size:12px">Message preview</div><span>📷　🎙</span></div>
+ </section>
+ <section id="contactEditor" class="panel hidden"><strong id="contactTitle">Add contact</strong>
+  <label>Name</label><input id="cName" placeholder="e.g. Mawami ❤️">
+  <label>Fictional phone number</label><input id="cNumber" type="tel" placeholder="+27 60 123 4567">
+  <label>Profile picture (optional)</label><input id="cPhoto" type="file" accept="image/*">
+  <div class="row" style="margin-top:12px"><button id="saveContact" class="primary">Save contact</button><button id="cancelContact">Cancel</button></div><div id="contactNotice" class="notice"></div>
+ </section>
+ <section id="messageEditor" class="panel hidden"><strong id="messageTitle">Add a fictional message</strong>
+  <label>Sender</label><select id="sender"><option value="out">You · right</option><option value="in">Contact · left</option></select>
+  <label>Message type</label><select id="kind"><option value="text">Text</option><option value="voice">Voice note (illustrative)</option><option value="sticker">Sticker</option></select>
+  <div id="textFields"><label>Message</label><input id="message" placeholder="Write a message"></div>
+  <div id="voiceFields" class="hidden"><label>Voice note duration (seconds)</label><input id="duration" type="number" min="1" max="600" value="25"></div>
+  <div class="row"><div><label>Date</label><input id="date" type="date"></div><div><label>Time</label><input id="time" type="time" value="14:30"></div></div>
+  <label>Ticks</label><select id="ticks"><option>✓✓</option><option>✓✓ blue</option><option>✓</option></select>
+  <label>Quoted reply (optional)</label><input id="quote" placeholder="Quoted message">
+  <button id="saveMessage" class="primary" style="width:100%;margin-top:12px">＋ Add message</button><button id="cancelMessage" style="width:100%;margin-top:8px">Back to chat</button><div id="messageNotice" class="notice"></div>
+  <strong style="display:block;margin-top:18px">Manage messages</strong><div id="messageRows"></div>
+ </section>
+ <section id="settingsPage" class="panel hidden"><strong>Appearance & wallpaper</strong>
+  <label>Choose wallpaper</label><div class="row"><button data-wall="plain">Dark</button><button data-wall="nature">Nature</button><button data-wall="pink">Pink</button><button data-wall="night">Night</button></div>
+  <label>Upload your own wallpaper</label><input id="wallFile" type="file" accept="image/*">
+  <div class="row"><div><label>Outgoing colour</label><input id="outColor" type="color" value="#652773"></div><div><label>Incoming colour</label><input id="inColor" type="color" value="#242729"></div><div><label>Background</label><input id="bgColor" type="color" value="#252525"></div></div>
+  <button id="applyColors" class="primary" style="width:100%;margin-top:12px">Apply colours</button>
+  <p class="notice">Your contacts, chats, wallpaper and colours are saved on this device. Export a backup occasionally.</p>
+ </section>
+ <section class="panel">
+  <div class="row"><button id="addMessageHome" class="primary">＋ Add chat message</button><button id="editContact">Edit current contact</button></div>
+  <div class="row" style="margin-top:8px"><button id="export">Export backup</button><button id="import">Import backup</button><input id="backupFile" type="file" accept=".json,application/json" class="hidden"></div>
+  <div id="status" class="notice" aria-live="polite">Your fictional chats are saved locally in this browser.</div>
+  <p class="notice">This is an independent fictional mockup. It does not access, send, or change real WhatsApp messages.</p>
+ </section>
+</div>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),KEY='chat-studio-v1';
+let state={contacts:[],current:null,appearance:{out:'#652773',in:'#242729',bg:'#252525',wall:'plain',wallData:''}};
+try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&Array.isArray(saved.contacts))state={...state,...saved}}catch(e){}
+let editingContact=null,editingMessage=null,photoData='';
+const pages=['homePage','contactsPage','chatPage','contactEditor','messageEditor','settingsPage'];
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));$('status').textContent='Saved on this device.'}catch(e){$('status').textContent='Storage is full. Export a backup and use smaller photos.'}}
+function show(id){pages.forEach(p=>$(p).classList.toggle('hidden',p!==id))}
+function current(){return state.contacts.find(c=>c.id===state.current)}
+function initials(n){return (n||'?').trim().slice(0,1).toUpperCase()}
+function setAvatar(el,c){el.innerHTML='';if(c?.photo){let im=document.createElement('img');im.src=c.photo;el.append(im)}else el.textContent=initials(c?.name)}
+function dateText(d){if(!d)return '';let [y,m,day]=d.split('-').map(Number);return new Date(Date.UTC(y,m-1,day)).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})}
+function lastText(c){let m=c.messages.at(-1);return m?(m.kind==='voice'?'🎤 Voice note':m.text):'No messages yet'}
+function renderLists(){
+ let q=$('search').value.toLowerCase(),rows=$('chatRows'),cr=$('contactRows');rows.innerHTML='';cr.innerHTML='';
+ let found=state.contacts.filter(c=>(c.name+' '+c.number).toLowerCase().includes(q));
+ if(!found.length){rows.innerHTML='<div class="empty">No contacts yet. Add your first contact!</div>'}
+ found.forEach(c=>{let b=document.createElement('button');b.className='contactrow';let a=document.createElement('div');a.className='avatar';setAvatar(a,c);let info=document.createElement('div');info.className='info';let n=document.createElement('strong');n.textContent=c.name;let p=document.createElement('div');p.className='preview';p.textContent=c.number+' · '+lastText(c);info.append(n,p);b.append(a,info);b.onclick=()=>openChat(c.id);rows.append(b)});
+ state.contacts.forEach(c=>{let r=document.createElement('div');r.className='contact-manage';let a=document.createElement('div');a.className='avatar';setAvatar(a,c);let d=document.createElement('div');d.className='details';let n=document.createElement('strong');n.textContent=c.name;let p=document.createElement('div');p.className='muted';p.textContent=c.number;d.append(n,p);let chat=button('Chat',()=>openChat(c.id)),edit=button('Edit',()=>contactForm(c.id)),del=button('Delete',()=>{if(confirm('Delete this fictional contact and its chats?')){state.contacts=state.contacts.filter(x=>x.id!==c.id);if(state.current===c.id)state.current=null;persist();renderLists()}});r.append(a,d,chat,edit,del);cr.append(r)})
+}
+function button(t,fn){let b=document.createElement('button');b.textContent=t;b.onclick=fn;return b}
+function openChat(id){state.current=id;let c=current();if(!c)return;show('chatPage');$('chatName').textContent=c.name;$('chatNumber').textContent=c.number;setAvatar($('chatAvatar'),c);renderMessages()}
+function renderMessages(){let c=current();if(!c)return;let box=$('bubbles');box.innerHTML='';let last='';c.messages.forEach(m=>{if(m.date!==last){let d=document.createElement('div');d.className='day';d.textContent=dateText(m.date);box.append(d);last=m.date}let b=document.createElement('div');b.className='bubble '+m.side;if(m.quote){let q=document.createElement('div');q.style.cssText='border-left:3px solid #c9a0d0;background:#0002;padding:7px;margin-bottom:7px';q.textContent=m.quote;b.append(q)}let t=document.createElement('div');t.textContent=m.kind==='voice'?'🎤　▰▰▰▰▰▰▱▱▱　'+m.duration+' sec':m.text;b.append(t);let meta=document.createElement('div');meta.className='meta';meta.textContent=m.time+(m.side==='out'?'　'+m.ticks.replace(' blue',''):'');if(m.side==='out'&&m.ticks.includes('blue'))meta.style.color='#53aaff';b.append(meta);box.append(b)});
+ if(!c.messages.length)box.innerHTML='<div class="empty">No messages yet. Add the first one.</div>';
+ let list=$('messageRows');list.innerHTML='';c.messages.forEach((m,i)=>{let r=document.createElement('div');r.className='msg-manage';let s=document.createElement('span');s.textContent=(i+1)+'. '+m.time+' · '+(m.kind==='voice'?'Voice note '+m.duration+'s':m.text);let e=button('Edit',()=>messageForm(i)),d=button('Delete',()=>{c.messages.splice(i,1);persist();renderMessages();renderLists()});r.append(s,e,d);list.append(r)});renderLists()
+}
+function contactForm(id){editingContact=id;let c=state.contacts.find(x=>x.id===id);$('contactTitle').textContent=c?'Edit contact':'Add contact';$('cName').value=c?.name||'';$('cNumber').value=c?.number||'';photoData=c?.photo||'';$('cPhoto').value='';$('contactNotice').textContent='';show('contactEditor')}
+$('cPhoto').onchange=()=>{let f=$('cPhoto').files[0];if(!f)return;if(f.size>1200000){$('contactNotice').textContent='Choose a photo smaller than 1.2 MB.';$('cPhoto').value='';return}let rd=new FileReader();rd.onload=()=>photoData=rd.result;rd.readAsDataURL(f)};
+$('saveContact').onclick=()=>{let name=$('cName').value.trim(),number=$('cNumber').value.trim();if(!name||!number){$('contactNotice').textContent='Enter both a name and a fictional number.';return}let c=editingContact?state.contacts.find(x=>x.id===editingContact):null;if(c){c.name=name;c.number=number;c.photo=photoData}else{c={id:'c'+Date.now()+Math.random().toString(16).slice(2),name,number,photo:photoData,messages:[]};state.contacts.push(c)}state.current=c.id;editingContact=null;persist();renderLists();openChat(c.id)};
+function messageForm(index=null){let c=current();if(!c)return;editingMessage=index;let m=index===null?null:c.messages[index];$('messageTitle').textContent=m?'Edit message':'Add a fictional message';$('sender').value=m?.side||'out';$('kind').value=m?.kind||'text';$('kind').dispatchEvent(new Event('change'));$('message').value=m?.text||'';$('duration').value=m?.duration||25;$('date').value=m?.date||new Date().toISOString().slice(0,10);$('time').value=m?.time||'14:30';$('ticks').value=m?.ticks||'✓✓';$('quote').value=m?.quote||'';$('messageNotice').textContent='';show('messageEditor')}
+$('kind').onchange=()=>{$('textFields').classList.toggle('hidden',$('kind').value!=='text');$('voiceFields').classList.toggle('hidden',$('kind').value!=='voice')};
+$('saveMessage').onclick=()=>{let c=current();if(!c)return;let kind=$('kind').value,text=$('message').value.trim(),duration=Number($('duration').value);if(kind==='text'&&!text){$('messageNotice').textContent='Type a message first.';return}if(kind==='sticker'&&!text)text='❤️';if(kind==='voice'&&(!Number.isInteger(duration)||duration<1||duration>600)){$('messageNotice').textContent='Choose a duration from 1 to 600 seconds.';return}if(!$('date').value||!$('time').value){$('messageNotice').textContent='Choose a date and time.';return}let m={side:$('sender').value,kind,text,duration,date:$('date').value,time:$('time').value,ticks:$('ticks').value,quote:$('quote').value.trim()};if(editingMessage===null)c.messages.push(m);else c.messages[editingMessage]=m;editingMessage=null;persist();openChat(c.id)};
+$('cancelMessage').onclick=()=>openChat(state.current);
+$('homeTab').onclick=()=>{show('homePage');renderLists()};$('contactsTab').onclick=()=>{show('contactsPage');renderLists()};$('settingsTab').onclick=()=>show('settingsPage');$('newHome').onclick=$('newContact').onclick=()=>contactForm(null);$('back').onclick=()=>{show('homePage');renderLists()};$('search').oninput=renderLists;$('addMessageHome').onclick=()=>current()?messageForm():$('status').textContent='Open a contact first.';$('editContact').onclick=()=>current()?contactForm(state.current):$('status').textContent='Open a contact first.';
+$('cancelContact').onclick=()=>show(state.current?'chatPage':'homePage');
+$('wallFile').onchange=()=>{let f=$('wallFile').files[0];if(!f)return;if(f.size>2500000){$('status').textContent='Choose a wallpaper under 2.5 MB.';return}let rd=new FileReader();rd.onload=()=>{state.appearance.wallData=rd.result;applyAppearance();persist()};rd.readAsDataURL(f)};
+function applyAppearance(){let a=state.appearance;document.documentElement.style.setProperty('--out',a.out);document.documentElement.style.setProperty('--in',a.in);document.documentElement.style.setProperty('--wall',a.bg);$('outColor').value=a.out;$('inColor').value=a.in;$('bgColor').value=a.bg;$('wall').style.backgroundImage=a.wallData?'linear-gradient(#0004,#0004),url('+JSON.stringify(a.wallData)+')':a.wall==='nature'?'linear-gradient(120deg,#31472d,#18291e,#52604a)':a.wall==='pink'?'linear-gradient(120deg,#714b5b,#362b43,#825a65)':a.wall==='night'?'radial-gradient(circle at 70% 20%,#69728c,#20243d 40%,#080a16 85%)':'none'}
+document.querySelectorAll('[data-wall]').forEach(b=>b.onclick=()=>{state.appearance.wall=b.dataset.wall;state.appearance.wallData='';applyAppearance();persist()});
+$('applyColors').onclick=()=>{state.appearance.out=$('outColor').value;state.appearance.in=$('inColor').value;state.appearance.bg=$('bgColor').value;applyAppearance();persist();renderMessages()};
+$('export').onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='chat-studio-backup.json';a.click();URL.revokeObjectURL(url)};
+$('import').onclick=()=> $('backupFile').click();$('backupFile').onchange=()=>{let f=$('backupFile').files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{try{let x=JSON.parse(rd.result);if(!x||!Array.isArray(x.contacts)||x.contacts.length>200)throw Error();state=x;persist();renderLists();applyAppearance();show('homePage')}catch(e){$('status').textContent='That backup file is not valid.'}};rd.readAsText(f)};
+applyAppearance();renderLists();
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+})();
+</script>
+</body></html>
