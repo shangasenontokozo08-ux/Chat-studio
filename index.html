@@ -3,372 +3,469 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#111b21">
-<title>Chat Space</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d12">
+<title>Chats</title>
 <style>
+:root {
+  --bg:#080d12; --panel:#111920; --panel2:#1b252e;
+  --text:#f4f6f8; --muted:#9aa8b3; --green:#20c875;
+  --line:#26323b; --out:#075e50; --in:#202c35;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#0b141a;color:#e9edef;font-family:Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-header{height:65px;background:#202c33;padding:0 16px;display:flex;align-items:center;justify-content:space-between}
-header h2{color:#25d366;margin:0;font-size:22px}
-.icon-btn{background:none;border:0;color:#e9edef;font-size:24px}
-.screen{display:none;max-width:650px;margin:auto;min-height:calc(100vh - 65px)}
-.screen.active{display:block}
-.search{width:100%;padding:13px;background:#202c33;border:0;border-radius:9px;color:white;outline:none}
-.search-wrap{padding:12px}
-.contact{display:flex;align-items:center;gap:13px;padding:13px 15px;border-bottom:1px solid #26343b;cursor:pointer}
-.contact:active{background:#202c33}
-.avatar{width:49px;height:49px;flex-shrink:0;border-radius:50%;background:#34534a;display:grid;place-items:center;font-size:23px;overflow:hidden}
-.contact-info{flex:1;min-width:0}
-.contact-info strong{display:block;font-size:16px;margin-bottom:6px}
-.preview{color:#aebac1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chat-top{height:65px;background:#202c33;display:flex;align-items:center;gap:12px;padding:0 12px}
-.chat-top button{background:none;border:0;color:white;font-size:28px}
-.chat-top .avatar{width:42px;height:42px}
-.chat-top strong{font-size:16px}
-.chat-body{padding:15px;min-height:calc(100vh - 130px);background:#0b141a;background-size:cover;background-position:center}
-.message{max-width:82%;width:max-content;padding:10px 12px;border-radius:9px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.35}
-.sent{background:#005c4b;margin-left:auto}
-.received{background:#202c33;margin-right:auto}
-.time{font-size:10px;color:#c0d4cc;text-align:right;margin-top:5px}
-.empty{text-align:center;color:#aebac1;padding:45px 20px}
-.panel{padding:18px}
-.panel h3{margin-top:25px;font-size:17px}
-.panel label{font-size:13px;color:#aebac1}
-.panel input,.panel textarea,.panel select{width:100%;padding:12px;margin:7px 0 13px;background:#202c33;color:white;border:1px solid #39464d;border-radius:7px}
-.panel textarea{min-height:85px;resize:vertical}
-.action{background:#25d366;color:#092b20;border:0;border-radius:7px;padding:12px 16px;font-weight:bold;margin:5px 4px 5px 0}
-.secondary{background:#26343b;color:white}
-.danger{background:#713d42;color:white}
-.back{background:none;border:0;color:#25d366;padding:0;font-size:16px}
-.item{padding:12px 0;border-bottom:1px solid #26343b}
-.item p{color:#aebac1;font-size:14px;overflow-wrap:anywhere}
-.settings-title{display:flex;justify-content:space-between;align-items:center}
+.app{max-width:520px;min-height:100vh;margin:auto;background:var(--bg);position:relative;padding-bottom:78px}
+header{height:62px;padding:0 17px;display:flex;align-items:center;justify-content:space-between;background:var(--bg);position:sticky;top:0;z-index:5}
+h1{font-size:27px;margin:0;font-weight:750;letter-spacing:-.6px}
+.header-actions{display:flex;gap:18px;align-items:center}
+.icon-btn{background:none;border:0;color:var(--text);font-size:23px;padding:5px}
+.search-wrap{padding:5px 14px 13px}
+.search{width:100%;border:0;border-radius:12px;background:var(--panel2);padding:12px 14px;color:white;outline:none}
+.section-title{font-size:14px;color:var(--muted);padding:7px 16px}
+.contact-row{display:flex;align-items:center;gap:12px;padding:11px 15px;cursor:pointer;min-height:76px}
+.contact-row:active{background:var(--panel)}
+.avatar{width:53px;height:53px;border-radius:50%;object-fit:cover;background:#34434d;display:flex;align-items:center;justify-content:center;font-size:25px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.contact-info{flex:1;min-width:0;border-bottom:1px solid var(--line);padding:4px 0 13px}
+.contact-top{display:flex;justify-content:space-between;gap:8px}
+.contact-name{font-size:16px;font-weight:650}
+.contact-time{font-size:11px;color:var(--muted)}
+.last-message{font-size:13px;color:var(--muted);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{text-align:center;color:var(--muted);padding:55px 25px}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:75px;background:#10171d;border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:10;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;min-width:55px}
+.nav-btn .nav-icon{font-size:22px}
+.nav-btn.active{color:var(--green)}
+.screen{display:none}.screen.active{display:block}
+.chat-header{height:62px;display:flex;align-items:center;gap:10px;padding:0 10px;background:#111920;position:sticky;top:0;z-index:6}
+.chat-header .avatar{width:39px;height:39px;font-size:20px}
+.chat-person{flex:1;min-width:0}
+.chat-person strong{font-size:16px;display:block}
+.chat-person small{color:var(--muted);font-size:11px}
+.chat-tools{display:flex;gap:13px}
+.chat-tools button{background:none;border:0;color:var(--text);font-size:22px}
+.messages{padding:15px 12px 12px;min-height:calc(100vh - 150px);background-color:#0b1218;background-size:cover;background-position:center}
+.day-label{text-align:center;margin:10px auto 18px;background:#202c35;color:#d7e0e5;border-radius:8px;padding:6px 12px;width:max-content;font-size:11px}
+.bubble-row{display:flex;margin:7px 0;align-items:flex-end;gap:5px}
+.bubble-row.out{justify-content:flex-end}
+.bubble{max-width:82%;padding:8px 10px 6px;border-radius:11px;background:var(--in);font-size:14px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;position:relative}
+.out .bubble{background:var(--out);border-top-right-radius:3px}
+.in .bubble{border-top-left-radius:3px}
+.bubble-time{font-size:9px;color:#c0d0d2;text-align:right;margin-top:4px}
+.ticks{color:#8ed9ef;margin-left:3px}
+.composer{position:sticky;bottom:75px;background:#10171d;padding:9px 9px;display:flex;align-items:center;gap:8px}
+.composer button{background:none;border:0;color:#dce4e8;font-size:23px}
+.composer input{flex:1;min-width:0;border:0;border-radius:22px;background:#26323b;color:white;padding:12px 15px;outline:none}
+.send-btn{background:var(--green)!important;color:#06130d!important;border-radius:50%;width:39px;height:39px;font-size:18px!important}
+.panel{padding:16px}
+.panel h2{font-size:21px;margin:5px 0 18px}
+.setting-card{background:var(--panel);border-radius:13px;padding:14px;margin-bottom:12px}
+.setting-card h3{font-size:15px;margin:0 0 12px}
+.field{display:block;width:100%;background:#202b34;color:white;border:1px solid #34424d;border-radius:9px;padding:11px;margin:8px 0;outline:none}
+.action{border:0;border-radius:9px;background:var(--green);color:#06140d;padding:11px 14px;font-weight:650}
+.action.secondary{background:#26343e;color:white}
+.action.danger{background:#8d343b;color:white}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.small{font-size:12px;color:var(--muted)}
+.profile-preview{display:flex;align-items:center;gap:12px;margin:10px 0}
+.profile-preview .avatar{width:65px;height:65px}
+.list-item{background:#18232b;border-radius:10px;padding:10px;margin:7px 0;display:flex;gap:8px;align-items:center}
+.list-item span{flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px}
+.list-item button{border:0;border-radius:7px;padding:7px;background:#34434e;color:white}
+.call-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.call-row .details{flex:1}
+.call-row small{display:block;color:var(--muted);margin-top:4px}
+.update-card{padding:15px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line)}
+.update-ring{padding:3px;border:2px solid var(--green);border-radius:50%}
+.community-card{padding:17px;border-bottom:1px solid var(--line)}
+.backup-note{line-height:1.5}
+.modal{position:fixed;inset:0;background:#000a;z-index:30;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.modal-box{width:min(520px,100%);background:#121b22;border-radius:18px 18px 0 0;padding:20px;max-height:85vh;overflow:auto}
+.modal-box h3{margin-top:0}
+.close{float:right;background:none;border:0;color:white;font-size:23px}
+.file-label{display:inline-block;padding:10px 13px;border-radius:9px;background:#26343e;color:white;font-size:13px;cursor:pointer}
+.file-label input{display:none}
+@media(min-width:600px){.app{border-left:1px solid #1b252e;border-right:1px solid #1b252e}}
 </style>
 </head>
 <body>
+<div class="app">
+  <header id="mainHeader">
+    <h1 id="pageTitle">Chats</h1>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openNewChat()" title="New chat">＋</button>
+      <button class="icon-btn" onclick="showTab('settings')" title="Settings">⚙</button>
+    </div>
+  </header>
 
-<header>
-<h2>Chat Space</h2>
-<button class="icon-btn" onclick="showScreen('settings')" title="Settings">⚙</button>
-</header>
+  <section class="screen active" id="chatsScreen">
+    <div class="search-wrap"><input class="search" id="searchChats" placeholder="⌕  Search" oninput="renderChats()"></div>
+    <div id="chatList"></div>
+  </section>
 
-<section id="home" class="screen active">
-<div class="search-wrap">
-<input class="search" id="search" placeholder="Search" oninput="renderContacts()">
+  <section class="screen" id="updatesScreen">
+    <div class="panel"><h2>Updates</h2><div class="small">Status updates</div></div>
+    <div class="update-card"><div class="update-ring"><div class="avatar" id="myStatusAvatar">🙂</div></div><div><strong>My status</strong><small class="small">Add a status update</small></div><button class="action secondary" onclick="alert('Status feature is a visual demo.')">＋</button></div>
+    <div class="section-title">Recent updates</div><div id="statusList"></div>
+  </section>
+
+  <section class="screen" id="callsScreen">
+    <div class="panel"><h2>Calls</h2><button class="action" onclick="openCallCreator()">＋ New call</button></div>
+    <div id="callList"></div>
+  </section>
+
+  <section class="screen" id="communitiesScreen">
+    <div class="panel"><h2>Communities</h2><div class="community-card">👥 <strong>New community</strong><p class="small">Organise groups and conversations in one place.</p><button class="action secondary" onclick="alert('Community preview')">Create community</button></div></div>
+  </section>
+
+  <section class="screen" id="settingsScreen">
+    <div class="panel">
+      <h2>Settings</h2>
+      <div class="setting-card">
+        <div class="profile-preview"><div class="avatar" id="myAvatarPreview">🙂</div><div><strong id="myNameLabel">My profile</strong><div class="small">Your profile picture</div></div></div>
+        <input class="field" id="myName" placeholder="Your name">
+        <label class="file-label">Upload profile picture<input type="file" accept="image/*" onchange="uploadMyPhoto(event)"></label>
+        <button class="action" onclick="saveMyProfile()">Save profile</button>
+      </div>
+      <div class="setting-card">
+        <h3>Contacts</h3>
+        <input class="field" id="contactName" placeholder="Contact name">
+        <input class="field" id="contactAbout" placeholder="About (optional)">
+        <label class="file-label">Choose contact picture<input type="file" accept="image/*" id="contactPhoto"></label>
+        <div class="actions"><button class="action" onclick="addContact()">Add contact</button></div>
+        <div id="contactsSettings"></div>
+      </div>
+      <div class="setting-card">
+        <h3>Add a message to a conversation</h3>
+        <select class="field" id="messageContact"></select>
+        <select class="field" id="messageSide"><option value="out">You sent this</option><option value="in">They sent this</option></select>
+        <textarea class="field" id="messageText" rows="3" placeholder="Write a message"></textarea>
+        <div class="small">Message date and time</div>
+        <input class="field" id="messageDate" type="date">
+        <input class="field" id="messageTime" type="time">
+        <button class="action" onclick="addMessage()">Add message</button>
+      </div>
+      <div class="setting-card">
+        <h3>Chat wallpaper</h3>
+        <select class="field" id="wallpaperChoice" onchange="setWallpaper(this.value)">
+          <option value="default">Default dark</option>
+          <option value="#101d25">Deep blue</option>
+          <option value="#211c2a">Purple night</option>
+          <option value="#17251e">Forest green</option>
+          <option value="#29221c">Warm brown</option>
+          <option value="#202020">Charcoal</option>
+        </select>
+        <label class="file-label">Upload wallpaper<input type="file" accept="image/*" onchange="uploadWallpaper(event)"></label>
+      </div>
+      <div class="setting-card">
+        <h3>Backup your chats</h3>
+        <p class="small backup-note">Download a backup to keep a copy of your contacts and messages. You can import it again later.</p>
+        <div class="actions">
+          <button class="action" onclick="exportBackup()">Export backup</button>
+          <label class="file-label">Import backup<input type="file" accept="application/json" onchange="importBackup(event)"></label>
+        </div>
+      </div>
+      <div class="setting-card">
+        <h3>Storage</h3>
+        <p class="small">Your chats are saved in this browser on this device. Clearing browser data may remove them, so keep a backup.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="chatScreen">
+    <div class="chat-header">
+      <button class="icon-btn" onclick="closeChat()">‹</button>
+      <div class="avatar" id="chatAvatar"></div>
+      <div class="chat-person"><strong id="chatName"></strong><small id="chatAbout">tap for contact info</small></div>
+      <div class="chat-tools">
+        <button onclick="makeCall('voice')" title="Voice call">☎</button>
+        <button onclick="makeCall('video')" title="Video call">▣</button>
+        <button onclick="openChatMenu()" title="More options">⋮</button>
+      </div>
+    </div>
+    <div class="messages" id="messagesArea"></div>
+    <div class="composer">
+      <button onclick="alert('Attachment menu preview')">＋</button>
+      <input id="messageInput" placeholder="Message" onkeydown="if(event.key==='Enter')sendMessage()">
+      <button onclick="alert('Voice note preview')">🎙</button>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </section>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn" data-tab="updates" onclick="showTab('updates')"><span class="nav-icon">◉</span>Updates</button>
+    <button class="nav-btn" data-tab="calls" onclick="showTab('calls')"><span class="nav-icon">☎</span>Calls</button>
+    <button class="nav-btn" data-tab="communities" onclick="showTab('communities')"><span class="nav-icon">♧</span>Communities</button>
+    <button class="nav-btn active" data-tab="chats" onclick="showTab('chats')"><span class="nav-icon">▤</span>Chats</button>
+    <button class="nav-btn" data-tab="settings" onclick="showTab('settings')"><span class="nav-icon">⚙</span>Settings</button>
+  </nav>
 </div>
-<div id="contacts"></div>
-</section>
 
-<section id="chat" class="screen">
-<div class="chat-top">
-<button onclick="showScreen('home')">‹</button>
-<div class="avatar" id="chatAvatar">🙂</div>
-<strong id="chatName">Contact</strong>
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modalBox"></div>
 </div>
-<div class="chat-body" id="chatBody"></div>
-</section>
-
-<section id="settings" class="screen">
-<div class="panel">
-<div class="settings-title">
-<h2>Settings</h2>
-<button class="back" onclick="showScreen('home')">← Back to chats</button>
-</div>
-
-<h3>Create a contact</h3>
-<label>Contact name</label>
-<input id="newName" placeholder="Enter contact name">
-<label>Profile picture emoji</label>
-<input id="newEmoji" placeholder="Example: 😊" maxlength="8">
-<button class="action" onclick="addContact()">＋ Add contact</button>
-
-<h3>Your contacts</h3>
-<div id="manageContacts"></div>
-
-<h3>Add a message</h3>
-<label>Choose contact</label>
-<select id="messageContact"></select>
-
-<label>Message sender</label>
-<select id="messageSide">
-<option value="received">Contact</option>
-<option value="sent">You</option>
-</select>
-
-<label>Message</label>
-<textarea id="messageText" placeholder="Type your message"></textarea>
-
-<label>Date</label>
-<input id="messageDate" type="date">
-
-<label>Time</label>
-<input id="messageTime" type="time">
-
-<button class="action" onclick="addMessage()">Add message</button>
-
-<h3>Conversation wallpaper</h3>
-<label>Choose contact</label>
-<select id="wallpaperContact" onchange="updateWallpaperChoice()"></select>
-<label>Choose wallpaper colour</label>
-<select id="wallpaperChoice" onchange="changeWallpaper()">
-<option value="">Default dark</option>
-<option value="#102820">Dark green</option>
-<option value="#29213a">Dark purple</option>
-<option value="#263344">Dark blue</option>
-<option value="#3a2925">Dark brown</option>
-<option value="#342b36">Dark mauve</option>
-</select>
-
-<h3>Edit or delete messages</h3>
-<div id="manageMessages"></div>
-
-<h3>Backup your chats</h3>
-<button class="action secondary" onclick="exportData()">Export backup</button>
-<button class="action secondary" onclick="document.getElementById('importFile').click()">Import backup</button>
-<input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
-</div>
-</section>
 
 <script>
-const STORAGE_KEY="chatSpaceData";
-let data;
-try{data=JSON.parse(localStorage.getItem(STORAGE_KEY))}catch(e){data=null}
-if(!data||!Array.isArray(data.contacts))data={contacts:[],messages:{},wallpapers:{}};
-if(!data.messages)data.messages={};
-if(!data.wallpapers)data.wallpapers={};
-let current=null;
+const STORAGE_KEY = 'chatSpaceData';
+const NEW_KEY = 'chatsAppData';
+let data = {
+  profile:{name:'My profile',photo:''},
+  contacts:[],
+  messages:{},
+  calls:[],
+  wallpaper:'default',
+  wallpaperImage:''
+};
+let currentContact = null;
+let activeTab = 'chats';
 
-function save(){
-localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+function safeRead(key){
+  try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}
 }
-
-function showScreen(id){
-document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-if(id==="home")renderContacts();
-if(id==="settings")renderSettings();
+function normalise(old){
+  if(!old || typeof old!=='object') return;
+  if(Array.isArray(old.contacts)){
+    data.contacts = old.contacts.map((c,i)=>({
+      id:String(c.id ?? c.contactId ?? ('contact_'+i)),
+      name:c.name || c.contactName || 'Contact',
+      about:c.about || '',
+      photo:c.photo || c.avatar || c.image || ''
+    }));
+  }
+  if(old.profile && typeof old.profile==='object') data.profile={...data.profile,...old.profile};
+  if(old.messages && !Array.isArray(old.messages) && typeof old.messages==='object'){
+    Object.keys(old.messages).forEach(k=>{
+      const arr=old.messages[k];
+      if(Array.isArray(arr)) data.messages[k]=arr.map((m,i)=>({
+        id:String(m.id ?? ('m_'+i)),
+        text:String(m.text ?? m.message ?? m.content ?? ''),
+        side:(m.side==='in'||m.sender==='them'||m.from==='contact'||m.type==='received')?'in':'out',
+        date:m.date || m.day || new Date().toISOString().slice(0,10),
+        time:m.time || '12:00'
+      }));
+    });
+  }
+  if(Array.isArray(old.calls)) data.calls=old.calls;
+  if(old.wallpaper) data.wallpaper=old.wallpaper;
+  if(old.wallpaperImage) data.wallpaperImage=old.wallpaperImage;
 }
-
-function addContact(){
-let name=document.getElementById("newName").value.trim();
-let emoji=document.getElementById("newEmoji").value.trim()||"🙂";
-if(!name){alert("Please enter a contact name.");return}
-let id=Date.now().toString();
-data.contacts.push({id,name,emoji});
-data.messages[id]=[];
-save();
-document.getElementById("newName").value="";
-document.getElementById("newEmoji").value="";
-renderSettings();
+function loadData(){
+  const current=safeRead(NEW_KEY);
+  if(current && current.contacts) {data={...data,...current};return;}
+  const previous=safeRead(STORAGE_KEY);
+  if(previous) normalise(previous);
+  saveData();
 }
-
-function renderContacts(){
-let q=document.getElementById("search").value.toLowerCase();
-let el=document.getElementById("contacts");
-el.innerHTML="";
-let list=data.contacts.filter(c=>c.name.toLowerCase().includes(q));
-if(!list.length){
-el.innerHTML='<div class="empty">No chats yet</div>';
-return;
+function saveData(){
+  try{
+    localStorage.setItem(NEW_KEY,JSON.stringify(data));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  }catch(e){
+    alert('Your browser storage is full. Try using smaller photos or export a backup.');
+  }
 }
-list.forEach(c=>{
-let msgs=data.messages[c.id]||[];
-let last=msgs[msgs.length-1];
-let div=document.createElement("div");
-div.className="contact";
-let avatar=document.createElement("div");
-avatar.className="avatar";
-avatar.textContent=c.emoji||"🙂";
-let info=document.createElement("div");
-info.className="contact-info";
-let name=document.createElement("strong");
-name.textContent=c.name;
-let preview=document.createElement("div");
-preview.className="preview";
-preview.textContent=last?last.text:"";
-info.append(name,preview);
-div.append(avatar,info);
-div.onclick=()=>openChat(c.id);
-el.appendChild(div);
-});
+function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(16).slice(2)}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function photoHTML(photo,name){
+  return photo?'<img src="'+photo+'" alt="">':escapeHTML((name||'🙂').trim().charAt(0).toUpperCase()||'🙂');
 }
-
+function avatarInto(el,photo,name){el.innerHTML=photoHTML(photo,name)}
+function showTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(tab+'Screen').classList.add('active');
+  document.getElementById('mainHeader').style.display='flex';
+  document.getElementById('bottomNav').style.display='flex';
+  document.getElementById('pageTitle').textContent=tab==='chats'?'Chats':tab.charAt(0).toUpperCase()+tab.slice(1);
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  renderChats();renderSettings();renderCalls();renderStatuses();
+}
+function renderChats(){
+  const list=document.getElementById('chatList'); if(!list)return;
+  const q=(document.getElementById('searchChats')?.value||'').toLowerCase();
+  const contacts=data.contacts.filter(c=>c.name.toLowerCase().includes(q));
+  if(!contacts.length){list.innerHTML='<div class="empty">No chats yet.<br><br>Tap ＋ to create a contact.</div>';return}
+  list.innerHTML=contacts.map(c=>{
+    const msgs=data.messages[c.id]||[];
+    const last=msgs[msgs.length-1];
+    return `<div class="contact-row" onclick="openChat('${c.id}')">
+      <div class="avatar">${photoHTML(c.photo,c.name)}</div>
+      <div class="contact-info"><div class="contact-top"><span class="contact-name">${escapeHTML(c.name)}</span><span class="contact-time">${last?escapeHTML(last.time):''}</span></div>
+      <div class="last-message">${last?(last.side==='out'?'You: ':'')+escapeHTML(last.text):escapeHTML(c.about||'Tap to start chatting')}</div></div></div>`;
+  }).join('');
+}
 function openChat(id){
-current=id;
-let c=data.contacts.find(x=>x.id===id);
-if(!c)return;
-document.getElementById("chatName").textContent=c.name;
-document.getElementById("chatAvatar").textContent=c.emoji||"🙂";
-renderChat();
-showScreen("chat");
+  currentContact=id;
+  const c=data.contacts.find(x=>x.id===id);if(!c)return;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('chatScreen').classList.add('active');
+  document.getElementById('mainHeader').style.display='none';
+  document.getElementById('bottomNav').style.display='none';
+  document.getElementById('chatName').textContent=c.name;
+  document.getElementById('chatAbout').textContent=c.about||'';
+  avatarInto(document.getElementById('chatAvatar'),c.photo,c.name);
+  renderMessages();
 }
-
-function renderChat(){
-let body=document.getElementById("chatBody");
-body.innerHTML="";
-body.style.backgroundColor=data.wallpapers[current]||"#0b141a";
-let msgs=data.messages[current]||[];
-if(!msgs.length){
-body.innerHTML='<div class="empty">No messages yet</div>';
-return;
+function closeChat(){
+  currentContact=null;
+  document.getElementById('chatScreen').classList.remove('active');
+  showTab('chats');
 }
-msgs.forEach(m=>{
-let div=document.createElement("div");
-div.className="message "+(m.side==="sent"?"sent":"received");
-let content=document.createElement("div");
-content.textContent=m.text;
-let time=document.createElement("div");
-time.className="time";
-time.textContent=(m.date||"")+" "+(m.time||"");
-div.append(content,time);
-body.appendChild(div);
-});
+function renderMessages(){
+  const area=document.getElementById('messagesArea');
+  const c=data.contacts.find(x=>x.id===currentContact);if(!c)return;
+  area.style.backgroundColor=data.wallpaper==='default'?'#0b1218':data.wallpaper;
+  area.style.backgroundImage=data.wallpaperImage?'url("'+data.wallpaperImage+'")':'none';
+  const msgs=data.messages[currentContact]||[];
+  let lastDate='';
+  area.innerHTML=msgs.map(m=>{
+    let day=m.date!==lastDate?`<div class="day-label">${escapeHTML(m.date)}</div>`:'';
+    lastDate=m.date;
+    return `${day}<div class="bubble-row ${m.side}">
+      <div class="bubble">${escapeHTML(m.text)}<div class="bubble-time">${escapeHTML(m.time)} ${m.side==='out'?'<span class="ticks">✓✓</span>':''}</div></div>
+      <button style="background:none;border:0;color:#aab7bf;font-size:12px" onclick="editMessage('${m.id}')">⋮</button>
+    </div>`;
+  }).join('');
+  area.scrollTop=area.scrollHeight;
 }
-
+function sendMessage(){
+  const input=document.getElementById('messageInput');const text=input.value.trim();
+  if(!text||!currentContact)return;
+  const now=new Date();
+  if(!data.messages[currentContact])data.messages[currentContact]=[];
+  data.messages[currentContact].push({id:uid(),text,side:'out',date:now.toISOString().slice(0,10),time:now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false})});
+  input.value='';saveData();renderMessages();
+}
+function openNewChat(){
+  showTab('settings');
+  document.getElementById('contactName').focus();
+  document.getElementById('contactName').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function addContact(){
+  const name=document.getElementById('contactName').value.trim();
+  if(!name){alert('Please enter a contact name.');return}
+  const file=document.getElementById('contactPhoto').files[0];
+  const create=photo=>{const c={id:uid(),name,about:document.getElementById('contactAbout').value.trim(),photo:photo||''};data.contacts.push(c);data.messages[c.id]=[];saveData();document.getElementById('contactName').value='';document.getElementById('contactAbout').value='';document.getElementById('contactPhoto').value='';renderSettings();renderChats();};
+  if(file)readImage(file,create);else create('');
+}
+function readImage(file,callback){
+  if(!file)return callback('');
+  if(file.size>2*1024*1024){alert('Please choose a picture smaller than 2 MB.');return}
+  const reader=new FileReader();reader.onload=()=>callback(reader.result);reader.readAsDataURL(file);
+}
+function uploadMyPhoto(e){const f=e.target.files[0];if(f)readImage(f,p=>{data.profile.photo=p;saveData();renderSettings()})}
+function saveMyProfile(){
+  data.profile.name=document.getElementById('myName').value.trim()||'My profile';
+  saveData();renderSettings();alert('Profile saved.');
+}
 function renderSettings(){
-let contacts=document.getElementById("manageContacts");
-let select=document.getElementById("messageContact");
-let wallSelect=document.getElementById("wallpaperContact");
-contacts.innerHTML="";
-select.innerHTML="";
-wallSelect.innerHTML="";
-data.contacts.forEach(c=>{
-let op=document.createElement("option");
-op.value=c.id;op.textContent=c.name;select.appendChild(op);
-let op2=document.createElement("option");
-op2.value=c.id;op2.textContent=c.name;wallSelect.appendChild(op2);
-let div=document.createElement("div");
-div.className="item";
-let name=document.createElement("strong");
-name.textContent=(c.emoji||"🙂")+" "+c.name;
-let del=document.createElement("button");
-del.className="action danger";
-del.textContent="Delete contact";
-del.onclick=()=>deleteContact(c.id);
-div.append(name,document.createElement("br"),del);
-contacts.appendChild(div);
-});
-renderManageMessages();
-updateWallpaperChoice();
+  const n=document.getElementById('myName');if(!n)return;
+  if(document.activeElement!==n)n.value=data.profile.name||'';
+  document.getElementById('myNameLabel').textContent=data.profile.name||'My profile';
+  avatarInto(document.getElementById('myAvatarPreview'),data.profile.photo,data.profile.name);
+  const list=document.getElementById('contactsSettings');
+  list.innerHTML=data.contacts.map(c=>`<div class="list-item"><div class="avatar" style="width:37px;height:37px">${photoHTML(c.photo,c.name)}</div><span>${escapeHTML(c.name)}</span><button onclick="editContact('${c.id}')">Edit</button><button onclick="deleteContact('${c.id}')">Delete</button></div>`).join('');
+  const select=document.getElementById('messageContact');
+  const old=select.value;
+  select.innerHTML=data.contacts.map(c=>`<option value="${c.id}">${escapeHTML(c.name)}</option>`).join('');
+  if(data.contacts.some(c=>c.id===old))select.value=old;
 }
-
-function addMessage(){
-let id=document.getElementById("messageContact").value;
-let text=document.getElementById("messageText").value.trim();
-if(!id){alert("Create a contact first.");return}
-if(!text){alert("Please write a message.");return}
-if(!data.messages[id])data.messages[id]=[];
-data.messages[id].push({
-text,
-side:document.getElementById("messageSide").value,
-date:document.getElementById("messageDate").value,
-time:document.getElementById("messageTime").value
-});
-save();
-document.getElementById("messageText").value="";
-renderManageMessages();
-alert("Message added.");
+function editContact(id){
+  const c=data.contacts.find(x=>x.id===id);if(!c)return;
+  openModal(`<button class="close" onclick="closeModal()">×</button><h3>Edit contact</h3><input class="field" id="editName" value="${escapeHTML(c.name)}"><input class="field" id="editAbout" value="${escapeHTML(c.about)}"><label class="file-label">Change picture<input type="file" id="editPhoto" accept="image/*"></label><div class="actions"><button class="action" onclick="saveContactEdit('${id}')">Save changes</button></div>`);
 }
-
-function renderManageMessages(){
-let el=document.getElementById("manageMessages");
-el.innerHTML="";
-data.contacts.forEach(c=>{
-(data.messages[c.id]||[]).forEach((m,i)=>{
-let div=document.createElement("div");
-div.className="item";
-let label=document.createElement("div");
-label.textContent=c.name+" · "+(m.side==="sent"?"You":"Contact")+" · "+(m.date||"")+" "+(m.time||"");
-let preview=document.createElement("p");
-preview.textContent=m.text;
-let edit=document.createElement("button");
-edit.className="action secondary";
-edit.textContent="Edit";
-edit.onclick=()=>{
-let updated=prompt("Edit message:",m.text);
-if(updated!==null&&updated.trim()){
-m.text=updated.trim();
-save();
-renderManageMessages();
-renderContacts();
+function saveContactEdit(id){
+  const c=data.contacts.find(x=>x.id===id);if(!c)return;
+  c.name=document.getElementById('editName').value.trim()||c.name;c.about=document.getElementById('editAbout').value.trim();
+  const f=document.getElementById('editPhoto').files[0];
+  const done=()=>{saveData();closeModal();renderSettings();renderChats();if(currentContact===id)openChat(id)};
+  if(f)readImage(f,p=>{if(p)c.photo=p;done()});else done();
 }
-};
-let del=document.createElement("button");
-del.className="action danger";
-del.textContent="Delete";
-del.onclick=()=>{
-if(confirm("Delete this message?")){
-data.messages[c.id].splice(i,1);
-save();
-renderManageMessages();
-renderContacts();
-}
-};
-div.append(label,preview,edit,del);
-el.appendChild(div);
-});
-});
-if(!el.children.length)el.innerHTML='<p class="preview">No messages yet.</p>';
-}
-
 function deleteContact(id){
-if(!confirm("Delete this contact and its messages?"))return;
-data.contacts=data.contacts.filter(c=>c.id!==id);
-delete data.messages[id];
-delete data.wallpapers[id];
-save();
-renderSettings();
+  if(!confirm('Delete this contact and its conversation?'))return;
+  data.contacts=data.contacts.filter(c=>c.id!==id);delete data.messages[id];saveData();renderSettings();renderChats();if(currentContact===id)closeChat();
 }
-
-function updateWallpaperChoice(){
-let id=document.getElementById("wallpaperContact").value;
-document.getElementById("wallpaperChoice").value=data.wallpapers[id]||"";
+function addMessage(){
+  const id=document.getElementById('messageContact').value;
+  const text=document.getElementById('messageText').value.trim();
+  if(!id||!text){alert('Choose a contact and enter a message.');return}
+  const date=document.getElementById('messageDate').value||new Date().toISOString().slice(0,10);
+  const time=document.getElementById('messageTime').value||'12:00';
+  if(!data.messages[id])data.messages[id]=[];
+  data.messages[id].push({id:uid(),text,side:document.getElementById('messageSide').value,date,time});
+  data.messages[id].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  document.getElementById('messageText').value='';saveData();renderChats();
+  if(currentContact===id)renderMessages();
 }
-
-function changeWallpaper(){
-let id=document.getElementById("wallpaperContact").value;
-if(!id)return;
-let value=document.getElementById("wallpaperChoice").value;
-data.wallpapers[id]=value||"#0b141a";
-save();
-if(current===id)renderChat();
+function editMessage(id){
+  const msgs=data.messages[currentContact]||[];const m=msgs.find(x=>x.id===id);if(!m)return;
+  openModal(`<button class="close" onclick="closeModal()">×</button><h3>Edit message</h3><textarea class="field" id="editText" rows="3">${escapeHTML(m.text)}</textarea><select class="field" id="editSide"><option value="out">You sent this</option><option value="in">They sent this</option></select><input class="field" type="date" id="editDate" value="${escapeHTML(m.date)}"><input class="field" type="time" id="editTime" value="${escapeHTML(m.time)}"><div class="actions"><button class="action" onclick="saveMessageEdit('${id}')">Save</button><button class="action danger" onclick="removeMessage('${id}')">Delete</button></div>`);
+  document.getElementById('editSide').value=m.side;
 }
-
-function exportData(){
-let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-let url=URL.createObjectURL(blob);
-let a=document.createElement("a");
-a.href=url;
-a.download="chat-space-backup.json";
-a.click();
-URL.revokeObjectURL(url);
+function saveMessageEdit(id){
+  const m=(data.messages[currentContact]||[]).find(x=>x.id===id);if(!m)return;
+  m.text=document.getElementById('editText').value;m.side=document.getElementById('editSide').value;m.date=document.getElementById('editDate').value;m.time=document.getElementById('editTime').value;
+  saveData();closeModal();renderMessages();renderChats();
 }
-
-function importData(event){
-let file=event.target.files[0];
-if(!file)return;
-let reader=new FileReader();
-reader.onload=()=>{
-try{
-let incoming=JSON.parse(reader.result);
-if(!Array.isArray(incoming.contacts)||!incoming.messages)throw Error();
-data=incoming;
-if(!data.wallpapers)data.wallpapers={};
-save();
-renderSettings();
-renderContacts();
-alert("Backup imported.");
-}catch(e){alert("Could not read that backup file.");}
-};
-reader.readAsText(file);
+function removeMessage(id){
+  data.messages[currentContact]=(data.messages[currentContact]||[]).filter(m=>m.id!==id);
+  saveData();closeModal();renderMessages();renderChats();
 }
-
-document.getElementById("messageDate").value=new Date().toISOString().slice(0,10);
-document.getElementById("messageTime").value=new Date().toTimeString().slice(0,5);
-renderContacts();
+function setWallpaper(value){data.wallpaper=value;data.wallpaperImage='';saveData();if(currentContact)renderMessages()}
+function uploadWallpaper(e){
+  const f=e.target.files[0];if(f)readImage(f,p=>{data.wallpaperImage=p;saveData();if(currentContact)renderMessages()});
+}
+function makeCall(type){
+  const c=data.contacts.find(x=>x.id===currentContact);if(!c)return;
+  data.calls.unshift({id:uid(),contactId:c.id,type,date:new Date().toLocaleString(),direction:'out'});
+  saveData();alert((type==='video'?'Video':'Voice')+' call preview for '+c.name);
+}
+function openCallCreator(){
+  if(!data.contacts.length){alert('Create a contact first.');return}
+  openModal(`<button class="close" onclick="closeModal()">×</button><h3>New call</h3><select class="field" id="callContact">${data.contacts.map(c=>`<option value="${c.id}">${escapeHTML(c.name)}</option>`).join('')}</select><div class="actions"><button class="action" onclick="createCall('voice')">☎ Voice call</button><button class="action" onclick="createCall('video')">▣ Video call</button></div>`);
+}
+function createCall(type){
+  const id=document.getElementById('callContact').value;
+  data.calls.unshift({id:uid(),contactId:id,type,date:new Date().toLocaleString(),direction:'out'});
+  saveData();closeModal();renderCalls();alert('Call preview added.');
+}
+function renderCalls(){
+  const el=document.getElementById('callList');if(!el)return;
+  el.innerHTML=data.calls.map(c=>{
+    const person=data.contacts.find(x=>x.id===c.contactId);
+    return `<div class="call-row"><div class="avatar">${photoHTML(person?.photo,person?.name||'?')}</div><div class="details"><strong>${escapeHTML(person?.name||'Unknown contact')}</strong><small>${c.type==='video'?'▣ Video call':'☎ Voice call'} · ${escapeHTML(c.date||'')}</small></div><span>${c.direction==='in'?'↙':'↗'}</span></div>`;
+  }).join('')||'<div class="empty">No calls yet.</div>';
+}
+function renderStatuses(){
+  const el=document.getElementById('statusList');if(!el)return;
+  el.innerHTML=data.contacts.map(c=>`<div class="update-card"><div class="update-ring"><div class="avatar">${photoHTML(c.photo,c.name)}</div></div><div><strong>${escapeHTML(c.name)}</strong><div class="small">No recent updates</div></div></div>`).join('');
+}
+function openChatMenu(){
+  openModal(`<button class="close" onclick="closeModal()">×</button><h3>Conversation options</h3><button class="action secondary" onclick="editContact('${currentContact}');closeModal()">Edit contact</button><button class="action secondary" onclick="showTab('settings');closeModal()">Open settings</button>`);
+}
+function openModal(html){document.getElementById('modalBox').innerHTML=html;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='chats-backup.json';a.click();URL.revokeObjectURL(url);
+}
+function importBackup(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const incoming=JSON.parse(reader.result);
+      if(!incoming||!Array.isArray(incoming.contacts)||!incoming.messages)throw new Error();
+      if(!confirm('Import this backup? It will replace the chats currently saved in this browser.'))return;
+      data={...data,...incoming};saveData();renderSettings();renderChats();renderCalls();renderStatuses();alert('Backup imported.');
+    }catch(err){alert('That backup file could not be read.')}
+  };reader.readAsText(f);
+}
+loadData();
+renderChats();renderSettings();renderCalls();renderStatuses();
 </script>
 </body>
 </html>
